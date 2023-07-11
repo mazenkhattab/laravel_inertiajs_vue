@@ -16,13 +16,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
-Route::controller(AuthController::class)->group(function () {
+
+Route::post('/',function(){
+    return response()->json('hello world');
+ });
+
+
+ Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
     Route::post('register', 'register');
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
+});
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
 });
