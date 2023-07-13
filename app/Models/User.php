@@ -3,7 +3,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,7 +13,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Hash;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject , MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -69,4 +69,6 @@ class User extends Authenticatable implements JWTSubject
             set: fn (string $value) => Hash::make($value),
         );
     }
+
+   protected $guard = 'api';
 }

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -15,10 +17,10 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['login','register']]);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api', ['except' => ['login','register']]);
+    // }
 
     /**
      * Get a JWT via given credentials.
@@ -29,7 +31,7 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
+        if (! $token = Auth::guard('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -65,7 +67,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh(true, true));
+        return $this->respondWithToken(auth('api')->refresh(true, true));
     }
 
     /**
@@ -77,11 +79,11 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {   
-        $Create_token = User::where('id', auth()->user()->id)->update(['api_token' => $token]);
+        // $Create_token = User::where('id', auth()->user()->id)->update(['api_token' => $token]);
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);
     }
    
@@ -99,6 +101,8 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' =>$request->password,
         ]);
+        event(new Registered($user));
+        // $user->notify(new Registered($user));
 
         return response()->json([
             'message' => 'User created successfully',
