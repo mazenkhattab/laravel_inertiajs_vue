@@ -102,7 +102,7 @@ class AuthController extends Controller
             'password' =>$request->password,
         ]);
         event(new Registered($user));
-        // $user->notify(new Registered($user));
+      
 
         return response()->json([
             'message' => 'User created successfully',

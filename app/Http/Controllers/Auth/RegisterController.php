@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use App\Models\admin;
 use App\Http\Controllers\Controller;
+use App\Mail\mailtest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Auth\Events\Registered;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Validator;
@@ -72,7 +74,8 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
-        event(new Registered($user));
+        // event(new Registered($user));
+        Mail::to($data['email'])->send(new mailtest($user));
         Auth::login($user);
         return $user;
     }
