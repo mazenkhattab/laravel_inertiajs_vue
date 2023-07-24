@@ -3,24 +3,26 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserRegisterationRequest;
+use App\Models\image;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Storage;
+use App\Traits\FileHandler;
 
 class AuthController extends Controller
 {
+    use FileHandler;
     
     /**
      * Create a new AuthController instance.
      *
      * @return void
      */
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:api', ['except' => ['login','register']]);
-    // }
+
 
     /**
      * Get a JWT via given credentials.
@@ -88,25 +90,26 @@ class AuthController extends Controller
     }
    
 
-    public function register(Request $request)
+    public function register(UserRegisterationRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' =>$request->password,
-        ]);
-        event(new Registered($user));
+        $data=$request->validated();
+        $image=null;
+        $user = User::create($data);
+        if(isset($data['image'])){
+            $image=$data['image'];
+        unset($data['image']);
+        $this->StoreImageToModel($user,$image);
+        
+      $user->load('image');
+    }
+    
+        // event(new Registered($user));
       
 
         return response()->json([
             'message' => 'User created successfully',
-            'user' => $user
+            'user' => $user,
+            
         ]);
     }
 

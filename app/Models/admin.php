@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 
 class admin  extends Authenticatable implements MustVerifyEmail
@@ -31,4 +32,9 @@ class admin  extends Authenticatable implements MustVerifyEmail
     protected $guard = 'api';
 
     use HasFactory;
+
+    public function image(): MorphOne
+    {
+        return $this->morphOne(Media::class, 'imageable');
+    }
 }
