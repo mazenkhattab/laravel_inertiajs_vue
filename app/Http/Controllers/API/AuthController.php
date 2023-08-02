@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\UserRegisterationRequest;
-use App\Models\image;
-use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\image;
+use App\Mail\mailtest;
+use App\Traits\FileHandler;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Storage;
-use App\Traits\FileHandler;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Requests\UserRegisterationRequest;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -104,6 +107,7 @@ class AuthController extends Controller
     }
     
         // event(new Registered($user));
+        Mail::to($user)->send(new mailtest($user));
       
 
         return response()->json([

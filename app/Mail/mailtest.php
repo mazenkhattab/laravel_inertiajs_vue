@@ -6,24 +6,28 @@ use App\Models\admin;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class mailtest extends Mailable
+class mailtest extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
+    
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public admin $user)
+    public function __construct(public Model $user)
     {
         
     }
-
+    public function via(){
+return 'mail';
+    }   
     /**
      * Get the message envelope.
      */
